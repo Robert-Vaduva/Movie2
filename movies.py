@@ -9,9 +9,9 @@ Users can add, delete, list, update, filter, and view statistics on movies store
 import sys
 import random
 import statistics
-import movie_storage_sql
-import api_helper
-import movies_web_generator
+import movies_sql_helper
+import movies_api_helper
+import movies_html_helper
 
 
 KEY_POSITION = 0
@@ -37,7 +37,7 @@ def get_valid_input(prompt, min_value, max_value, default_value):
         except ValueError:
             print("Invalid input. Please enter a number.")
             continue
-        if not (min_value <= value <= max_value):
+        if not min_value <= value <= max_value:
             print(f"Please enter a valid value, in the range {min_value}-{max_value}")
             continue
         return value
@@ -73,8 +73,11 @@ def add_movie(movies):
                 input("\nPress enter to continue ")
                 return
             break
-    title, year, rating, poster_url = api_helper.get_movie_info(movie_name)
-    movie_storage_sql.add_movie(title, year, rating, poster_url)
+    if movies_api_helper.get_movie_info(movie_name) is not None:
+        title, year, rating, poster_url = movies_api_helper.get_movie_info(movie_name)
+        movies_sql_helper.add_movie(title, year, rating, poster_url)
+    else:
+        print("API service not available at the moment, try again later")
     input("\nPress enter to continue ")
 
 
@@ -83,7 +86,7 @@ def delete_movie(movies):
     try:
         movie_name = str(input("Enter movie name to delete: "))
         if movie_name in movies.keys():
-            movie_storage_sql.delete_movie(movie_name)
+            movies_sql_helper.delete_movie(movie_name)
         else:
             print(f"Movie {movie_name} doesn't exist!")
         input("\nPress enter to continue ")
@@ -108,14 +111,14 @@ def update_movies(movies):
                     break
             except (TypeError, ValueError) as error:
                 print("Add movie error:", error)
-        movie_storage_sql.update_movie(movie_name, movie_rating)
+        movies_sql_helper.update_movie(movie_name, movie_rating)
         input("\nPress enter to continue ")
     except (TypeError, ValueError) as error:
         print("Update movie error: ", error)
 
 
 def stats(movies):
-    """Display average, median, best, and worst movie ratings."""
+    """Display the average, median, best, and the worst movie ratings."""
     # Get the average rating
     total_ratings = 0
     ratings = []
@@ -222,9 +225,9 @@ def filter_movies(movies):
     input("\nPress enter to continue ")
 
 
-def generate_website(_movies):
-    movies_web_generator.generate_movies_website()
-    print("Website was generated successfully.")
+def generate_website(movies):
+    """Generate and display the movies' website."""
+    movies_html_helper.generate_movies_website(movies)
 
 
 FUNCTIONS = {0: exit_fnc, 1: list_movies, 2: add_movie, 3: delete_movie,
@@ -251,11 +254,15 @@ def main():
             print("9. Movies sorted by year")
             print("10. Filter movies")
             print("11. Generate website")
-            user_input = int(input("\nEnter choice (0-10): "))
+            user_input = int(input(f"\nEnter choice (0-{len(FUNCTIONS) - 1}): "))
             if 0 <= user_input < len(FUNCTIONS):
-                FUNCTIONS[user_input](movie_storage_sql.get_all_movies())
+                movies_data = movies_sql_helper.get_all_movies()
+                if movies_data is not None:
+                    FUNCTIONS[user_input](movies_data)
+                else:
+                    print("The database failed to load the requested data")
             else:
-                print("Invalid choice")
+                print(f"Invalid choice, please select a number between 0 and {len(FUNCTIONS) - 1}")
         except (TypeError, ValueError, KeyError) as error:
             print("Main function error:", error)
 
