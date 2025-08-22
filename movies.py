@@ -22,6 +22,26 @@ MIN_RATING = 0.0
 MAX_RATING = 10.0
 
 
+def get_valid_input(prompt, min_value, max_value, default_value):
+    """Prompt for a numeric value within range or return default if blank."""
+    while True:
+        user_input = input(prompt)
+        if not user_input.strip():
+            return default_value
+        if any(char.isalpha() for char in user_input):
+            print("Invalid input. Please enter a valid number.")
+            continue
+        try:
+            value = float(user_input)
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            continue
+        if not (min_value <= value <= max_value):
+            print(f"Please enter a valid value, in the range {min_value}-{max_value}")
+            continue
+        return value
+
+
 def exit_fnc(_movies):
     """Exit the application with a goodbye message."""
     print("Bye!")
@@ -201,29 +221,14 @@ def filter_movies(movies):
     input("\nPress enter to continue ")
 
 
-def get_valid_input(prompt, min_value, max_value, default_value):
-    """Prompt for a numeric value within range or return default if blank."""
-    while True:
-        user_input = input(prompt)
-        if not user_input.strip():
-            return default_value
-        if any(char.isalpha() for char in user_input):
-            print("Invalid input. Please enter a valid number.")
-            continue
-        try:
-            value = float(user_input)
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-            continue
-        if not (min_value <= value <= max_value):
-            print(f"Please enter a valid value, in the range {min_value}-{max_value}")
-            continue
-        return value
+def generate_website(_movies):
+    print("Website was generated successfully.")
 
 
 FUNCTIONS = {0: exit_fnc, 1: list_movies, 2: add_movie, 3: delete_movie,
              4: update_movies, 5: stats, 6: random_movie, 7: search_movie,
-             8: movies_by_rating, 9: movies_by_year, 10: filter_movies}
+             8: movies_by_rating, 9: movies_by_year, 10: filter_movies,
+             11: generate_website}
 
 
 def main():
@@ -243,6 +248,7 @@ def main():
             print("8. Movies sorted by rating")
             print("9. Movies sorted by year")
             print("10. Filter movies")
+            print("11. Generate website")
             user_input = int(input("\nEnter choice (0-10): "))
             if 0 <= user_input < len(FUNCTIONS):
                 FUNCTIONS[user_input](movie_storage_sql.get_all_movies())
