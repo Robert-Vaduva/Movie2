@@ -11,10 +11,12 @@ engine = create_engine(DB_URL, echo=DEBUGGING_ACTIVE)
 def get_all_movies():
     """Retrieve all movies from the database."""
     with engine.connect() as connection:
-        result = connection.execute(text("SELECT title, year, rating FROM movies"))
+        result = connection.execute(text("SELECT title, year, rating, url FROM movies"))
         movies = result.fetchall()
 
-    return {row[0]: {"year": row[1], "rating": row[2]} for row in movies}
+    return {row[0]: {"year": row[1],
+                     "rating": row[2],
+                     "url": row[3]} for row in movies}
 
 
 def add_movie(title, year, rating, url):

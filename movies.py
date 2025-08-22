@@ -11,6 +11,7 @@ import random
 import statistics
 import movie_storage_sql
 import api_helper
+import movies_web_generator
 
 
 KEY_POSITION = 0
@@ -222,6 +223,7 @@ def filter_movies(movies):
 
 
 def generate_website(_movies):
+    movies_web_generator.generate_movies_website()
     print("Website was generated successfully.")
 
 
