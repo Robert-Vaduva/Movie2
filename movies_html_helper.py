@@ -27,12 +27,13 @@ TARGET_PATH = os.path.join("static", "index.html")
 TITLE_KEYWORD = "__TEMPLATE_TITLE__"
 MOVIE_GRID_KEYWORD = "__TEMPLATE_MOVIE_GRID__"
 WEB_PAGE_TITLE = "Welcome to Robert's Movie App"
+ENCODING = "utf-8"
 
 
 def get_html_template(path):
     """Read and return the HTML template content from a file."""
     try:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, "r", encoding=ENCODING) as file:
             return file.read()
     except FileNotFoundError:
         print(f"File not found: {path}")
@@ -58,16 +59,24 @@ def format_data_for_html(movies):
             output += "\t\t\t</div>\n"
             output += "\t\t</li>\n"
     else:
-        print("In order to format the html file, a dictionary is expected")
+        print("In order to format the html file, a list of dictionaries is expected")
     return output
 
 
 def generate_movies_website(movies):
     """Generate the movie website by injecting data into the HTML template."""
-    formated_movie_grid = format_data_for_html(movies)
     template = get_html_template(TEMPLATE_PATH)
-    index = template.replace(TITLE_KEYWORD, WEB_PAGE_TITLE)
-    index = index.replace(MOVIE_GRID_KEYWORD, formated_movie_grid)
-    with open(TARGET_PATH, "w", encoding="utf-8") as file:
-        file.write(index)
-        print("Website was generated successfully.")
+    if not template:
+        print("The website was not generated, problem with the html template")
+    else:
+        formated_movie_grid = format_data_for_html(movies)
+        index = template.replace(TITLE_KEYWORD, WEB_PAGE_TITLE)
+        index = index.replace(MOVIE_GRID_KEYWORD, formated_movie_grid)
+        try:
+            with open(TARGET_PATH, "w", encoding=ENCODING) as file:
+                file.write(index)
+                print("Website was generated successfully.")
+        except FileExistsError as error:
+            print(f"File already exists: {TARGET_PATH}", error)
+        except OSError as error:
+            print(f"File error: {error}")

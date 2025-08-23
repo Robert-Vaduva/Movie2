@@ -68,8 +68,8 @@ def add_movie(movies):
             print(f"Movie name must not be empty nor "
                   f"greater than {MAX_MOVIE_NAME_LENGTH} characters")
         else:
-            if movie_name in movies:
-                print(f"Movie {movie_name} already exists!")
+            if movie_name in movies.keys():
+                print(f"Movie \"{movie_name}\" already exists!")
                 input("\nPress enter to continue ")
                 return
             break
@@ -88,7 +88,7 @@ def delete_movie(movies):
         if movie_name in movies.keys():
             movies_sql_helper.delete_movie(movie_name)
         else:
-            print(f"Movie {movie_name} doesn't exist!")
+            print(f"Movie \"{movie_name}\" doesn't exist!")
         input("\nPress enter to continue ")
     except (TypeError, ValueError) as error:
         print("Delete movie error: ", error)
@@ -99,7 +99,7 @@ def update_movies(movies):
     try:
         movie_name = str(input("Enter movie name: "))
         if movie_name not in movies.keys():
-            print(f"Movie {movie_name} does not exist!")
+            print(f"Movie \"{movie_name}\" does not exist!")
             input("\nPress enter to continue ")
             return
         while True:
