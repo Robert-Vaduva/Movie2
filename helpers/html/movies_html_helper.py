@@ -22,8 +22,9 @@ Functions:
 import os
 
 
-TEMPLATE_PATH = os.path.join("static", "index_template.html")
-TARGET_PATH = os.path.join("static", "index.html")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+TEMPLATE_PATH = os.path.join(BASE_DIR, "static", "index_template.html")
+TARGET_PATH = os.path.join(BASE_DIR, "static", "index.html")
 TITLE_KEYWORD = "__TEMPLATE_TITLE__"
 MOVIE_GRID_KEYWORD = "__TEMPLATE_MOVIE_GRID__"
 WEB_PAGE_TITLE = "Welcome to Robert's Movie App"

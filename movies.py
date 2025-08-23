@@ -9,9 +9,9 @@ Users can add, delete, list, update, filter, and view statistics on movies store
 import sys
 import random
 import statistics
-import movies_sql_helper
-import movies_api_helper
-import movies_html_helper
+import helpers.sql.movies_sql_helper as movies_sql_helper
+import helpers.api.movies_api_helper as movies_api_helper
+import helpers.html.movies_html_helper as movies_html_helper
 
 
 KEY_POSITION = 0

@@ -14,12 +14,14 @@ Functions:
 """
 
 
+import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError, OperationalError, SQLAlchemyError
 
 
 # Define the database URL
-DATABASE_URL = "sqlite:///data//movies.db"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+DATABASE_URL = f"sqlite:///{os.path.join(BASE_DIR, 'data', 'movies.db')}"
 # Create the engine
 DEBUGGING_ACTIVE = False
 engine = create_engine(DATABASE_URL, echo=DEBUGGING_ACTIVE)
