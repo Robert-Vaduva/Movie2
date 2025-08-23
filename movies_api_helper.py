@@ -15,10 +15,7 @@ import requests
 from dotenv import load_dotenv
 
 
-# Load environment variables from .env
-load_dotenv()
 API_URL = "http://www.omdbapi.com/?t="
-API_KEY = os.getenv('API_KEY')
 CONNECT_TIMEOUT = 5  # seconds
 READ_TIMEOUT = 10  # seconds
 ENCODING = "utf-8"
@@ -27,12 +24,24 @@ ENCODING = "utf-8"
 def get_movie_info(title):
     """Fetch movie details (title, year, rating, poster) from the API by title."""
     try:
-        response = requests.get(f"{API_URL + title}&apikey={API_KEY}",
+        # Load environment variables from .env
+        load_dotenv()
+        response = requests.get(f"{API_URL + title}&apikey={os.getenv('API_KEY')}",
                                 timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
         response.encoding = ENCODING
         data = response.json()
+
+        # Check if API response was successful
+        if data.get("Response") == "False":
+            print(f"API error: {data.get('Error', 'Unknown error')}")
+            return None
+
         return (data['Title'], int(data['Released'][-4:]),
                 round(float(data['Ratings'][0]['Value'][0:3]), 1), data['Poster'])
     except requests.exceptions.Timeout:
         print("The API request timed out")
-        return None
+    except (KeyError, IndexError, ValueError) as error:
+        print(f"Data parsing error: {error}")
+    except requests.RequestException as error:
+        print(f"Request error: {error}")
+    return None
